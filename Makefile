@@ -1,5 +1,5 @@
 # path to STM32F103 standard peripheral library
-STD_PERIPH_LIBS ?= ./STM32F10x_StdPeriph_Lib_V3.5.0/
+STD_PERIPH_LIBS ?= ./stm32f10x-stdperiph-lib/
 
 # list of source files
 SOURCES  = main.c
@@ -16,7 +16,7 @@ CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 
 # path to st-flash (or should be specified in PATH)
-ST_FLASH ?= st-flash
+STM32_FLASH ?= stm32flash
 
 # specify compiler flags
 CFLAGS  = -g -O2 -Wall
@@ -46,4 +46,4 @@ clean:
 
 # flash
 burn:
-	sudo $(ST_FLASH) write $(PROJECT).bin 0x8000000
+	sudo $(STM32_FLASH) -w $(PROJECT).bin -v -g 0x0 /dev/ttyUSB0
