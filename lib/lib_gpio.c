@@ -19,9 +19,11 @@
 */
 void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config_TypeDef * GPIO_Pins_Cfg)
 {
+    /* Let's get the Pull resistor flag for input mode. */
+    /* It's the lowest bit in GPIOx->Mode */
+    uint8_t pu_pd_flag = GPIO_Pins_Cfg->Mode & 0x01U;
     /* make a 4bit configuration word out of the struct */
-    /* Shift Mode 2 bit left and OR with Speed to get what we need */
-    uint8_t pu_pd_flag = (GPIO_Pins_Cfg->Mode << 1) & 0x01U << 1; 
+    /* First clear up Pull resistor flag and OR with  Speed to get what we need */
     uint32_t cfg = ((GPIO_Pins_Cfg->Mode << 1) & ~(0x01U << 1)) | GPIO_Pins_Cfg->Speed; 
     uint32_t regtemp, pinpos, mask, index;
     /* this is a lenth of a specific pin configuration bits inside the register */
@@ -101,13 +103,15 @@ void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config
        GPIOx->CRH = regtemp; 
     }
 
+    /* In case it's input mode with Pull-down resistor */
     /* Reset ODR bits */
     if ((GPIO_Pins_Cfg->Speed == 0x00U) & (pu_pd_flag == 0x00U))
     {
         GPIOx->BRR |= GPIO_Pins;
     }
     
-    /* Set OD bits */
+    /* In case it's input mode with pull-up resistore */
+    /* Set ODR bits */
     if ((GPIO_Pins_Cfg->Speed == 0x00U) & (pu_pd_flag != 0x00U))
     {
         GPIOx->BSRR |= GPIO_Pins; 

@@ -22,6 +22,11 @@
 
 /* A name alias to GPIO modes enum.  */
 /* Contains GPIO Input and Output Modes */
+/* 3rd bit is added to represent Pull resistor flag */
+/* When not needed this 3rd bit has to ignored */
+/* Example: */
+/* Floating input is 2bits 0b01 */
+/* When we add  third bit it becomes 0b011 */
 typedef enum
 {
     IN_ANALOG = 0x00U,   /* Analog mode */ 
