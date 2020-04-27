@@ -1,3 +1,0 @@
-[submodule "stm32f10x-stdperiph-lib"]
-	path = stm32f10x-stdperiph-lib
-	url = git@github.com:ArtemHarkusha/stm32f10x-stdperiph-lib.git
