@@ -1,12 +1,11 @@
 # path to STM32F103 standard peripheral library
-STD_PERIPH_LIBS ?= ./stm32f10x-stdperiph-lib/
+CMSIS ?= ./CMSIS/
 
 # list of source files
 SOURCES  = main.c
-SOURCES += $(STD_PERIPH_LIBS)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c
-SOURCES += $(STD_PERIPH_LIBS)/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
-SOURCES += $(STD_PERIPH_LIBS)/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
-SOURCES += $(STD_PERIPH_LIBS)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/TrueSTUDIO/startup_stm32f10x_md.s
+SOURCES += ./lib/lib_gpio.c
+SOURCES += $(CMSIS)/system_stm32f10x.c
+SOURCES += $(CMSIS)/startup_stm32f10x_md.s
 
 # name for output binary files
 PROJECT ?= led
@@ -20,15 +19,14 @@ STM32_FLASH ?= stm32flash
 
 # specify compiler flags
 CFLAGS  = -g -O2 -Wall
-CFLAGS += -T$(STD_PERIPH_LIBS)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210B-EVAL/stm32_flash.ld
+CFLAGS += -T$(CMSIS)/stm32_flash.ld
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 CFLAGS += -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
 CFLAGS += -Wl,--gc-sections
 CFLAGS += -I.
-CFLAGS += -I$(STD_PERIPH_LIBS)/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/
-CFLAGS += -I$(STD_PERIPH_LIBS)/Libraries/CMSIS/CM3/CoreSupport
-CFLAGS += -I$(STD_PERIPH_LIBS)/Libraries/STM32F10x_StdPeriph_Driver/inc
+CFLAGS += -I$(CMSIS)
+CFLAGS += -I./lib
 
 OBJS = $(SOURCES:.c=.o)
 
