@@ -4,6 +4,7 @@ CMSIS ?= ./CMSIS/
 # list of source files
 SOURCES  = main.c
 SOURCES += ./lib/lib_gpio.c
+SOURCES += ./lib/lib_rcc.c
 SOURCES += $(CMSIS)/system_stm32f10x.c
 SOURCES += $(CMSIS)/startup_stm32f10x_md.s
 

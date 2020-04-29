@@ -12,30 +12,9 @@ void delay(int millis) {
 
 int ClockInit()
 {
+  int StartUpCounter; 
+    RCC_EnableHSE();
 
-    int StartUpCounter;
-    
-    //Set HSEON(Hight Speed External) bit. For accelation from external gen
-    //this a 16th bit in RCC_CR regestry
-    RCC->CR |= (0x01U << 16);
-
-
-   //Wait for HSE to initialize
-    for(StartUpCounter=0; ; StartUpCounter++)
-    {
-        // As soon as HSE is ready it will set 17th bit in  RCC_RC regestry
-        if(RCC->CR & (0x01U << 17))
-            break;
-     
-        // exit with error if is not set during 0x1000 cycles 
-        if(StartUpCounter > 0x1000)
-        {
-            // reset HSEON
-            RCC->CR &= ~(0x01U << 16);
-            return 1;
-        }
-    }
-    
     // set PLL Multiplire to 9 and clock PPL from HSE 
     RCC->CFGR |= (0x02U << 18)
               | (0x01U << 16);
@@ -77,7 +56,8 @@ int ClockInit()
 
 int main(void) {
 
-ClockInit();
+//ClockInit();
+//RCC_EnableHSE();
 
     // enable clock on APB2
    // pointer 'register_address' of type uint32_t points to 0x40021018 address in MC memory
@@ -85,48 +65,49 @@ ClockInit();
 //volatile uint32_t * register_address = (uint32_t *) 0x40021018U;
   //  *(volatile uint32_t *)register_address |= 0x10;
 
+RCC_PLLClockConfig_TypeDef PLLCFG;
+PLLCFG.PLLClockSource = RCC_PLLClockSorce_HSE;
+PLLCFG.PLLMulCoef = PLLMulCoef_MUL9;
 
+RCC_SysClockConfig_TypeDef  CLOCK;
+CLOCK.SysClockSource = RCC_SysClockSource_HSE;
+CLOCK.SysClockPrescaler = RCC_SysClockPrescaler_NONE;
+CLOCK.APB1ClockPrescaler = RCC_PeriphClockPrescaler_NONE;
+CLOCK.APB2ClockPrescaler = RCC_PeriphClockPrescaler_NONE;
 
+RCC_ConfigHighSpeedClock(&CLOCK);
 
 GPIO_enable_clock(GPIOC);
 GPIO_enable_clock(GPIOB);
-     volatile uint32_t * portc_bssr = (uint32_t *) 0x40011010U;
 
    GPIO_Pins_Config_TypeDef var; 
    var.Mode = OUT_OD;
-   var.Speed = S50M;
-
-GPIO_Pins_Config_TypeDef var_input;
-
-var_input.Mode = IN_PD;
-var_input.Speed = NONE;
+   var.Speed = S2M;
 
    // GPIOC_Pin_13_Init()
    GPIO_Config_Pins(GPIOC, GPIO_Pin_13, &var);
    GPIO_Config_Pins(GPIOC, GPIO_Pin_15, &var);
-   GPIO_Config_Pins(GPIOB, GPIO_Pin_12, &var_input);
+   GPIO_Config_Pins(GPIOB, GPIO_Pin_12, &var);
     // main loop
     while(1) {
 
-        if (GPIOB->IDR & GPIO_Pin_12)
-        {
-            GPIO_SetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
-        }
-        else
-        {
-            GPIO_ResetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
-        }
+       // if (GPIOB->IDR & GPIO_Pin_12)
+        //{
+         //   GPIO_SetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
+        //}
+        //else
+       // {
+        //    GPIO_ResetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
+        //}
         //Set bit
-        //*(volatile uint32_t *) portc_bssr |= (0x01U << 13);
-        //GPIO_SetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
-        //GPIO_SetBits(GPIOB, GPIO_Pin_12);
-        //delay(DELAY);
+        GPIO_SetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
+        GPIO_SetBits(GPIOB, GPIO_Pin_12);
+        delay(DELAY);
         
         //Reset bit
-        //*(volatile uint32_t *)portc_bssr |= 0x20000000U;
-        //GPIO_ResetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
-        //GPIO_ResetBits(GPIOB, GPIO_Pin_12);
-        //delay(DELAY);
+        GPIO_ResetBits(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
+        GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+        delay(DELAY);
     }
 
 }
