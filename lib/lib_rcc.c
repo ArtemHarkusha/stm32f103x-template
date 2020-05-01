@@ -4,8 +4,8 @@
  *
  *
  */
-
-uint32_t RCC_EnableHSE(void)
+/* Configure HSE. Does not switch SYSCLOCK to HSE */
+uint32_t RCC_HSEConfig(void)
 {
    uint32_t counter;
    /* Set HSEON (Hight Speed External) bit to clock from external generator */
@@ -18,15 +18,15 @@ uint32_t RCC_EnableHSE(void)
         if (RCC->CR & (0x01U << 17))
         {
             //RCC->CR &= ~(0x01U);
-            RCC->CFGR |= 0x01U;
+            //RCC->CFGR |= 0x01U;
             
             //while((RCC->CFGR & (0x03U << 2)) != (0x01U << 2))
             // {
             // }
             //
-    while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)0x04)
-    {
-    }
+   // while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)0x04)
+   // {
+   // }
             return (uint32_t)0x00U;
         }
    }
@@ -38,11 +38,61 @@ uint32_t RCC_EnableHSE(void)
    return (uint32_t)0x01U;
 }
 
-uint32_t RCC_ConfigHighSpeedClock(RCC_SysClockConfig_TypeDef * clock_config)
+void RCC_PLLConfig(RCC_PLLCLKConfig_TypeDef * config)
 {
-    if (clock_config->SysClockSource == RCC_SysClockSource_HSE)
+    if ((config->RCC_PLLCLK_Source & 0x10U) != 0x00U)
     {
-      return  RCC_EnableHSE();
+        RCC->CFGR |= config->RCC_PLLCLK_Source << 16;
     }
+    else
+    {
+        RCC->CFGR |= 0x01U << 16;
+        RCC->CFGR |= 0x01U << 17;
+    }
+
+    RCC->CFGR |= config->RCC_PLLMul_Coef << 18;
+
+    // Turn on PLL 
+    RCC->CR |= (0x01U << 24);
+
+    // Wait for PLL to init
+    for(; ;)
+    {
+        // check PLLRDY flag in RCC_RC 
+        if(RCC->CR & (0x01U << 25))
+            break;
+    }    
+    RCC->CFGR |= (0x02U << 0U);
+
+    while((RCC->CFGR & (0x03U << 2)) != (0x02U << 2))
+    {
+    }
+}
+
+
+uint32_t RCC_HSCLKConfig(RCC_HSCLKConfig_TypeDef * clock_config)
+{
+
+    /* Let's take care of Prescalers first */
+    if (clock_config->RCC_SYSCLK_Source == RCC_SYSCLKSource_HSE)
+    {
+        RCC_EnableHSE();
+    }
+
+    if (clock_config->RCC_SYSCLK_Source == RCC_SYSCLKSource_HSI)
+    {
+        //RCC_EnableHSI();
+    
+    }
+    if (clock_config->RCC_SYSCLK_Source == RCC_SYSCLKSource_PLL)
+    {
+        RCC_EnableHSE();
+        RCC_PLLConfig(clock_config->PLLClockConfig);
+    }
+
+    RCC->CR &= ~(0x01U);
+
+    //enable MCO output 
+    RCC->CFGR |= 0x07U << 24;
     return 0x00U;
 }

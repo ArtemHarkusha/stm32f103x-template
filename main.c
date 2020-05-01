@@ -56,29 +56,25 @@ int ClockInit()
 
 int main(void) {
 
-//ClockInit();
-//RCC_EnableHSE();
+RCC_PLLCLKConfig_TypeDef PLL;
+PLL.RCC_PLLMul_Coef = RCC_PLLMul_2;
+PLL.RCC_PLLCLK_Source = RCC_PLLCLKSource_HSE_Div2;
 
-    // enable clock on APB2
-   // pointer 'register_address' of type uint32_t points to 0x40021018 address in MC memory
-   // U in the end means unsigned. (uint32_t *) is a type convension aka cast
-//volatile uint32_t * register_address = (uint32_t *) 0x40021018U;
-  //  *(volatile uint32_t *)register_address |= 0x10;
+RCC_HSCLKConfig_TypeDef CLK;
+CLK.RCC_SYSCLK_Source = RCC_SYSCLKSource_HSE;
+CLK.RCC_SYSCLK_Prescaler = RCC_SYSCLK_Div1;
+CLK.RCC_APB1CLK_Prescaler = RCC_HCLK_Div1;
+CLK.RCC_APB2CLK_Prescaler = RCC_HCLK_Div1;
+CLK.RCC_SYSCLK_Frequency = 8;
+CLK.PLLClockConfig = &PLL;
 
-RCC_PLLClockConfig_TypeDef PLLCFG;
-PLLCFG.PLLClockSource = RCC_PLLClockSorce_HSE;
-PLLCFG.PLLMulCoef = PLLMulCoef_MUL9;
-
-RCC_SysClockConfig_TypeDef  CLOCK;
-CLOCK.SysClockSource = RCC_SysClockSource_HSE;
-CLOCK.SysClockPrescaler = RCC_SysClockPrescaler_NONE;
-CLOCK.APB1ClockPrescaler = RCC_PeriphClockPrescaler_NONE;
-CLOCK.APB2ClockPrescaler = RCC_PeriphClockPrescaler_NONE;
-
-RCC_ConfigHighSpeedClock(&CLOCK);
+RCC_HSCLKConfig(&CLK);
 
 GPIO_enable_clock(GPIOC);
 GPIO_enable_clock(GPIOB);
+GPIO_enable_clock(GPIOA);
+
+
 
    GPIO_Pins_Config_TypeDef var; 
    var.Mode = OUT_OD;
@@ -88,6 +84,11 @@ GPIO_enable_clock(GPIOB);
    GPIO_Config_Pins(GPIOC, GPIO_Pin_13, &var);
    GPIO_Config_Pins(GPIOC, GPIO_Pin_15, &var);
    GPIO_Config_Pins(GPIOB, GPIO_Pin_12, &var);
+
+   var.Mode = OUT_AF_PP;
+   var.Speed = S50M;
+
+   GPIO_Config_Pins(GPIOA, GPIO_Pin_8, &var);
     // main loop
     while(1) {
 
