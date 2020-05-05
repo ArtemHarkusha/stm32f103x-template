@@ -1,6 +1,11 @@
 #include <stdint.h>
 #include <stm32f10x.h>
 
+/* lib configuration defines */
+#define LOOPS_TO_STABILIZE ((uint16_t)0x3E8U) /* whait for clock sources to stabilize */
+/* from stm32f10x.h */ 
+/*typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState; */
+
 /* System clock sources */
 #define RCC_SYSCLKSource_HSI ((uint8_t)0x00U) /* High-speed internal */
 #define RCC_SYSCLKSource_HSE ((uint8_t)0x01U) /* High-speed external */
@@ -8,7 +13,7 @@
 
 /* PLL (Phase-Lock-Loop) clock sources */
 #define RCC_PLLCLKSource_HSI ((uint8_t)0x00U) /* High-speed internal */
-#define RCC_PLLCLKSource_HSE_Div1 ((uint8_t)0x01U), /* High-speed external */
+#define RCC_PLLCLKSource_HSE_Div1 ((uint8_t)0x01U) /* High-speed external */
 #define RCC_PLLCLKSource_HSE_Div2 ((uint8_t)0x02U) /* High-speed external prescaled by 2 */
 
 /* AHB (Advanced High-Performance Bus) prescaler */
@@ -57,6 +62,16 @@
 #define RCC_MCO_HSE ((uint8_t)0x06U) /* 0b110 HSE clock selected */
 #define RCC_MCO_PLLCLK_Div2 ((uint8_t)0x07U) /* 0b111 PLL clock divided by 2 selected */
 
+/* From stm32f10x.h FLASH latency */
+//#define  FLASH_ACR_LATENCY ((uint8_t)0x03) /*!< LATENCY[2:0] bits (Latency) */
+//#define  FLASH_ACR_LATENCY_0 ((uint8_t)0x00) /*!< Bit 0 */
+//#define  FLASH_ACR_LATENCY_1 ((uint8_t)0x01) /*!< Bit 0 */
+//#define  FLASH_ACR_LATENCY_2 ((uint8_t)0x02) /*!< Bit 1 */
+
+//#define  FLASH_ACR_HLFCYA ((uint8_t)0x08) /*!< Flash Half Cycle Access Enable */
+//#define  FLASH_ACR_PRFTBE ((uint8_t)0x10) /*!< Prefetch Buffer Enable */
+//#define  FLASH_ACR_PRFTBS ((uint8_t)0x20) /*!< Prefetch Buffer Status */
+
 /* PLL configuration structure. */
 typedef struct
 {
@@ -76,5 +91,15 @@ typedef struct
     RCC_PLLCLKConfig_TypeDef * PLLClockConfig; /* A pointer to PLL configuration struct. Nullable */
 }RCC_HSCLKConfig_TypeDef;
 
-uint32_t RCC_EnableHSE(void);
-uint32_t RCC_HSCLKConfig(RCC_HSCLKConfig_TypeDef * clock_config);
+uint32_t RCC_ConfigHSE(FunctionalState state);
+void RCC_ConfigPLL(RCC_PLLCLKConfig_TypeDef * config);
+void RCC_ConfigHSI(FunctionalState state);
+void RCC_SetFlashLatency(uint8_t latency);
+void RCC_SetFlashPrefetchedBuffer(FunctionalState state);
+void RCC_SetPrescalers(RCC_HSCLKConfig_TypeDef * clock_config);
+void RCC_SetAPB2Prescaler(uint8_t prescaler);
+void RCC_SetAPB1Prescaler(uint8_t prescaler);
+void RCC_SetSyclkPrescaler(uint8_t prescaler);
+void RCC_MCOEnable(uint8_t mco_config);
+uint32_t RCC_SelectSysCLKSource(uint8_t source);
+uint32_t RCC_ConfigHSCLK(RCC_HSCLKConfig_TypeDef * clock_config);
