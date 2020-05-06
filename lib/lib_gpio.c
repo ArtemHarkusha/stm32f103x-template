@@ -182,3 +182,19 @@ void GPIO_enable_clock(GPIO_TypeDef * GPIOx)
         RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
     }
 }
+
+/**
+ * @brief changes the bits state of a specific GPIO port to opposit.
+ * @param GPIOx: where x can be (A..D) to select GPIO peripheral.
+ * @param GPIO_Pins: pins to toggle.
+ * @retval None
+ */
+void GPIO_ToggleBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins)
+{
+    /* read port bits state */
+    uint32_t pins_state = GPIOx->ODR;
+    /* change bits state to opposit */
+    /* (pins_state & GPIO_Pins) << 16 will cause corresponding bits to be reset, if set*/
+    /* (~pins_state & GPIO_Pins) this will set corresponding bits, if reset */
+    GPIOx->BSRR |= ((pins_state & GPIO_Pins) << 16 | (~pins_state & GPIO_Pins));
+}

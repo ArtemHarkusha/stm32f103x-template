@@ -63,3 +63,4 @@ void GPIO_enable_clock(GPIO_TypeDef * GPIOx);
 void GPIO_SetBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);
 void GPIO_ResetBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);
 void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config_TypeDef * GPIO_Pins_Cfg);
+void GPIO_ToggleBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);
