@@ -57,10 +57,10 @@ typedef struct
 {
     GPIO_Mode_TypeDef Mode : 4;
     GPIO_Speed_TypeDef Speed : 4;
-}GPIO_Pins_Config_TypeDef;
+}GPIO_PinsConfig_TypeDef;
 
-void GPIO_enable_clock(GPIO_TypeDef * GPIOx);
+void GPIO_EnableClock(GPIO_TypeDef * GPIOx);
 void GPIO_SetBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);
 void GPIO_ResetBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);
-void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config_TypeDef * GPIO_Pins_Cfg);
+void GPIO_ConfigPins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_PinsConfig_TypeDef * GPIO_PinsConfig);
 void GPIO_ToggleBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins);

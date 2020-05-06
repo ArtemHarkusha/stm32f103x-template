@@ -17,14 +17,14 @@
  * @param GPIO_Pins_Cfg: a combination of CNF and MODE bits represented in a struct.
  * @retval None
 */
-void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config_TypeDef * GPIO_Pins_Cfg)
+void GPIO_ConfigPins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_PinsConfig_TypeDef * GPIO_PinsCfg)
 {
     /* Let's get the Pull resistor flag for input mode. */
     /* It's the lowest bit in GPIOx->Mode */
-    uint8_t pu_pd_flag = GPIO_Pins_Cfg->Mode & 0x01U;
+    uint8_t pu_pd_flag = GPIO_PinsCfg->Mode & 0x01U;
     /* make a 4bit configuration word out of the struct */
     /* First clear up Pull resistor flag and OR with  Speed to get what we need */
-    uint32_t cfg = ((GPIO_Pins_Cfg->Mode << 1) & ~(0x01U << 1)) | GPIO_Pins_Cfg->Speed; 
+    uint32_t cfg = ((GPIO_PinsCfg->Mode << 1) & ~(0x01U << 1)) | GPIO_PinsCfg->Speed; 
     uint32_t regtemp, pinpos, mask, index;
     /* this is a lenth of a specific pin configuration bits inside the register */
     uint32_t cfg_field_lenth = 0x04U;
@@ -105,14 +105,14 @@ void GPIO_Config_Pins(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins, GPIO_Pins_Config
 
     /* In case it's input mode with Pull-down resistor */
     /* Reset ODR bits */
-    if ((GPIO_Pins_Cfg->Speed == 0x00U) & (pu_pd_flag == 0x00U))
+    if ((GPIO_PinsCfg->Speed == 0x00U) & (pu_pd_flag == 0x00U))
     {
         GPIOx->BRR |= GPIO_Pins;
     }
     
     /* In case it's input mode with pull-up resistore */
     /* Set ODR bits */
-    if ((GPIO_Pins_Cfg->Speed == 0x00U) & (pu_pd_flag != 0x00U))
+    if ((GPIO_PinsCfg->Speed == 0x00U) & (pu_pd_flag != 0x00U))
     {
         GPIOx->BSRR |= GPIO_Pins; 
     }
@@ -155,7 +155,7 @@ void GPIO_ResetBits(GPIO_TypeDef * GPIOx, uint16_t GPIO_Pins)
  * @param   GPIOx: where x can be (A..D) to select GPIO peripheral.
  * @retval  None
 */
-void GPIO_enable_clock(GPIO_TypeDef * GPIOx)
+void GPIO_EnableClock(GPIO_TypeDef * GPIOx)
 {
 /* RCC->APB2ENR contains a pointer to the RCC_APB2ENR register address 0x040021018U*/
     if(GPIOx == GPIOA)

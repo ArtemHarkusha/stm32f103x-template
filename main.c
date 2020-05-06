@@ -50,26 +50,26 @@ CLK.RCC_SYSCLK_Frequency = 72;
 CLK.PLLClockConfig = &PLL;
 
 RCC_ConfigHSCLK(&CLK);
-GPIO_enable_clock(GPIOC);
-GPIO_enable_clock(GPIOB);
-GPIO_enable_clock(GPIOA);
+GPIO_EnableClock(GPIOC);
+GPIO_EnableClock(GPIOB);
+GPIO_EnableClock(GPIOA);
 
 time_init();
 
 
-   GPIO_Pins_Config_TypeDef var; 
+   GPIO_PinsConfig_TypeDef var; 
    var.Mode = OUT_OD;
    var.Speed = S50M;
 
    // GPIOC_Pin_13_Init()
-   GPIO_Config_Pins(GPIOC, GPIO_Pin_13, &var);
-   GPIO_Config_Pins(GPIOC, GPIO_Pin_15, &var);
-   GPIO_Config_Pins(GPIOB, GPIO_Pin_12, &var);
+   GPIO_ConfigPins(GPIOC, GPIO_Pin_13, &var);
+   GPIO_ConfigPins(GPIOC, GPIO_Pin_15, &var);
+   GPIO_ConfigPins(GPIOB, GPIO_Pin_12, &var);
 
    var.Mode = OUT_AF_PP;
    var.Speed = S50M;
 
-   GPIO_Config_Pins(GPIOA, GPIO_Pin_8, &var);
+   GPIO_ConfigPins(GPIOA, GPIO_Pin_8, &var);
     // main loop
     while(1) {
  //       GPIO_TogglePins(GPIOC, (GPIO_Pin_13 | GPIO_Pin_15));
